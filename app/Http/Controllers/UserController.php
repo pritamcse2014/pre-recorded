@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Helper\JWTToken;
+use App\Mail\OTPMail;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -48,6 +50,30 @@ class UserController extends Controller
         }
         else
         {
+            return response()->json([
+                'status' => 'Failed',
+//                'message' => $e->getMessage()
+                'message' => 'Unauthorized.'
+            ], 200);
+        }
+    }
+
+    function SendOTPCode(Request $request) {
+        $email = $request->input('email');
+        $otp = rand(1000, 9999);
+        $count = User::where('email', '=', $email)->count();
+        if ($count == 1) {
+//            OTP Send
+            Mail::to($email)->send(new OTPMail($otp));
+//            OTP Code Insert DB Table Update
+            $count = User::where('email', '=', $email)->update(['otp'=>$otp]);
+            return response()->json([
+                'status' => 'Success',
+                'message' => 'OTP Code Send Your Email Successfully.',
+            ], 200);
+
+        }
+        else {
             return response()->json([
                 'status' => 'Failed',
 //                'message' => $e->getMessage()
