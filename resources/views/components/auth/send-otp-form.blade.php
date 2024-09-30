@@ -14,3 +14,28 @@
         </div>
     </div>
 </div>
+
+<script>
+    async function VerifyEmail() {
+        let email = document.getElementById('email').value;
+
+        if (email.length === 0) {
+            errorToast('Please Enter Your Email Address.');
+        } else {
+            showLoader();
+            let response = await axios.post('/send-otp', {
+                email: email
+            });
+            hideLoader();
+            if (response.status === 200 && response.data['status'] === 'Success') {
+                successToast(response.data['message']);
+                sessionStorage.setItem('email', email);
+                setTimeout(() => {
+                    window.location.href="/verifyOtp";
+                }, 1000);
+            } else {
+                errorToast(response.data['message']);
+            }
+        }
+    }
+</script>
