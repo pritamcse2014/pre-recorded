@@ -17,3 +17,33 @@
         </div>
     </div>
 </div>
+
+<script>
+    async function ResetPass() {
+        let password = document.getElementById('password').value;
+        let cpassword = document.getElementById('cpassword').value;
+
+        if (password.length === 0) {
+            errorToast('Password is Required.');
+        } else if (cpassword === 0) {
+            errorToast('Confirm Password is Required.');
+        } else if (password !== cpassword) {
+            errorToast('Password and Confirm Password Must be Same.');
+        } else {
+            showLoader();
+            let response = await axios.post('/reset-password', {
+                password: password
+            });
+            hideLoader();
+            if (response.status === 200 && response.data['status'] === 'Success') {
+                successToast(response.data['message']);
+                // debugger;
+                setTimeout(() => {
+                    window.location.href="/userLogin";
+                }, 1000);
+            } else {
+                errorToast(response.data['message']);
+            }
+        }
+    }
+</script>
