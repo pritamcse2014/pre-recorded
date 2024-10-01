@@ -32,6 +32,10 @@ class UserController extends Controller
         return view('pages.auth.reset-password-page');
     }
 
+    function ProfilePage():View{
+        return view('pages.dashboard.profile-page');
+    }
+
     function UserRegistration(Request $request) {
         try {
             User::create([
