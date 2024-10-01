@@ -39,3 +39,60 @@
         </div>
     </div>
 </div>
+
+<script>
+    getProfile();
+    async function getProfile() {
+        showLoader();
+        let res = await axios.get('/user-profile');
+        hideLoader();
+        if (res.status === 200 && res.data['status'] === 'Success') {
+            let data = res.data['data'];
+            document.getElementById('email').value=data['email'];
+            document.getElementById('firstName').value=data['firstName'];
+            document.getElementById('lastName').value=data['lastName'];
+            document.getElementById('mobile').value=data['mobile'];
+            document.getElementById('password').value=data['password'];
+        }
+        else {
+            errorToast(res.data['message'])
+        }
+    }
+
+    async function onUpdate() {
+        let firstName = document.getElementById('firstName').value;
+        let lastName = document.getElementById('lastName').value;
+        let mobile = document.getElementById('mobile').value;
+        let password = document.getElementById('password').value;
+
+        if (firstName.length === 0) {
+            errorToast("First Name is Required.");
+        }
+        else if (lastName.length === 0) {
+            errorToast("Last Name is Required.");
+        }
+        else if (mobile.length === 0) {
+            errorToast("Mobile is Required.");
+        }
+        else if (password.length === 0) {
+            errorToast("Password is Required.");
+        }
+        else {
+            showLoader();
+            let res = await axios.post("/user-update", {
+                firstName : firstName,
+                lastName : lastName,
+                mobile : mobile,
+                password : password
+            });
+            hideLoader();
+            if (res.status === 200 && res.data['status'] === 'Success') {
+                successToast(res.data['message']);
+                await getProfile();
+            }
+            else {
+                errorToast(res.data['message']);
+            }
+        }
+    }
+</script>
