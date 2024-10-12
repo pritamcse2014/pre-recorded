@@ -33,4 +33,23 @@ class ProductController extends Controller
             'user_id' => $user_id
         ]);
     }
+
+    function DeleteProduct(Request $request) {
+        $user_id = $request->header('id');
+        $product_id = $request->input('id');
+        $file_path = $request->input('file_path');
+        File::delete($file_path);
+        return Product::where('id', $product_id)->where('user_id', $user_id)->delete();
+    }
+
+    function ProductById(Request $request) {
+        $user_id = $request->header('id');
+        $product_id = $request->input('id');
+        return Product::where('id', $product_id)->where('user_id', $user_id)->first();
+    }
+
+    function ProductList(Request $request) {
+        $user_id = $request->header('id');
+        return Product::where('user_id', $user_id)->get();
+    }
 }
